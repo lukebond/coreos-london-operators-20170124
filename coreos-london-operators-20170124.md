@@ -41,10 +41,11 @@
   - Lots of Node.js
   - Lots of Linux containers
   - Consulting, helping teams release more often with higher quality
-  - Have closely following CoreOS's output, especially Etcd, rkt and Fleet
+  - Have closely followed CoreOS's output, especially Etcd, rkt and Fleet
 - Nowadays independant / freelance
 - Currently working at the UK Home Office (Kubernetes, Docker, CoreOS, red tape)
 - I enjoy demystifying and cutting through jargon to make things clearer
+- Hobbies include home-brewing and making headings with figlet
 - I'm unnaturally excited about Operators
 
 ---
@@ -111,3 +112,22 @@ If I was confused about these things then maybe you are too. Hope this helps!
 - If there's time:
   - A future world of Operators
   - Example use-cases of Operators
+
+---
+
+# THE NICHE FOR OPERATORS - WHAT KUBERNETES DOES AND DOESN'T DO FOR YOU
+
+- Let's say you have a 12-factor web app. Kubernetes will:
+  - Keep it running; surviving crashes and node failures (ReplicaSets, ReplicationControllers)
+  - Scale it up and down when you want it to (ReplicaSets, ReplicationControllers)
+  - Internally load balance traffic to instances (Services)
+- Stateless apps can be destroyed, moved and upgraded easily anytime
+  - Existing Kubernetes primitives are perfect for this
+
+---
+
+# THE NICHE FOR OPERATORS - WHAT KUBERNETES DOES AND DOESN'T DO FOR YOU
+
+- Let's say you have a clustered database, however:
+  - XXX what do stateful sets give you?
+	- XXX implications of scaling, ReplicaSets and services
