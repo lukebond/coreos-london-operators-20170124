@@ -72,7 +72,6 @@ There are some obvious things:
 
 - Operators encapsulate operational knowledge in code
   - The kind of stuff a sysadmin knows about a service, but automated
-  - Maybe they're like shepherds for applications that run on Kubernetes?
 - Operators leverage the Kubernetes API and primitives in order to do this
 
 ---
@@ -103,8 +102,8 @@ If I was confused about these things then maybe you are too. Hope this helps!
   - ...and using CoreOS's "How can you create an operator?" guidelines
 - Some code examples towards building a basic operator
 - If there's time:
-  - A future world of Operators
   - Example use-cases of Operators
+  - A future world of Operators
 
 ---
 
@@ -303,6 +302,21 @@ The Etcd operator has such a chaos monkey type test approach:
 
 
 -> ## Demo Time!!
+
+---
+
+# EXAMPLE USE CASES OF OPERATORS
+
+- Anything with application-specific operational/maintenance tasks
+- Databases are the obvious choice
+  - Postgres
+  - Redis
+  - Mongo
+  - etc.
+- Also "legacy" or non cloud-native applications
+  - That old stateful Java enterprise monolith on which your business still
+    depends
+- Apps that don't like to be moved without some manual intervention
 
 ---
 
