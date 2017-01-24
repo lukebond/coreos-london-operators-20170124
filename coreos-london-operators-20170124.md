@@ -59,7 +59,7 @@
 
 - Maybe you read the CoreOS Etcd Operator announcement blog post
 - Maybe you watched some talks by Brandon Philips
-- Maybe you listened to Brandon on the Changelog episode "Understanding
+- Maybe you listened to Brandon on the Cloudcast episode "Understanding
   Kubernetes Operators"
 
 --> But maybe, like me, you were still left scratching your head a bit! <--
@@ -126,7 +126,7 @@ If I was confused about these things then maybe you are too. Hope this helps!
   - Instances need to stay with their data
   - Scaling may not be as simple as adding more nodes
   - Specialist knowledge is required to effectively manage and operate each
-    databases
+    database
 
 ---
 
@@ -144,67 +144,90 @@ If I was confused about these things then maybe you are too. Hope this helps!
 
 ---
 
+# COREOS OPERATOR ANNOUNCEMENTS
+
+> A Site Reliability Engineer (SRE) is a person that operates an application
+> by writing software. They are an engineer, a developer, who knows how to
+> develop software specifically for a particular application domain. The
+> resulting piece of software has an application's operational domain
+> knowledge programmed into it.
+
+> We call this new class of software Operators. An Operator is an
+> application-specific controller that extends the Kubernetes API to create,
+> configure, and manage instances of complex stateful applications on behalf
+> of a Kubernetes user. It builds upon the basic Kubernetes resource and
+> controller concepts but includes domain or application-specific knowledge to
+> automate common tasks.
+
+-> -- Brandon Philips, "Introducing Operators", CoreOS blog November 3 2016
+
+---
+
+# COREOS OPERATOR ANNOUNCEMENTS
+
+> An Operator is software that encodes this domain knowledge and extends the
+> Kubernetes API through the third party resources mechanism, enabling users
+> to create, configure, and manage applications. Like Kubernetes's built-in
+> resources, an Operator doesn't manage just a single instance of the
+> application, but multiple instances across the cluster.
+
+-> -- Ibid.
+
+---
+
+# THE ETCD OPERATOR
+
+- CoreOS have released Operators for Etcd and for Prometheus
+- They envisage more being built for things like PostgreSQL and Cassandra
+- Today I'll focus on the Etcd Operator
+
+The Etcd Operator has the following features:
+- Create/Destroy
+- Resize
+- Backup
+- Upgrade
+
+It operates using the model: Observe, Analyse and Act
+
+[https://coreos.com/blog/introducing-the-etcd-operator.html#how-it-works](https://coreos.com/blog/introducing-the-etcd-operator.html#how-it-works)
+
+We'll look at some examples of how it does this in the next section.
+
+---
+
 # CREATING OPERATORS
 
 CoreOS have published some guidelines on creating operators:
 
-https://coreos.com/blog/introducing-operators.html#how-can-you-create-an-operator
+[https://coreos.com/blog/introducing-operators.html#how-can-you-create-an-operator](https://coreos.com/blog/introducing-operators.html#how-can-you-create-an-operator)
 
-Let's work through each item in their list, imagining that we're building a
-Postgres Operator.
-
-Code can be found here: https://gitlab.com/lukebond/postgres-operator.git
-
-Mostly this is copy-pasta from the Etcd operator!
+Let's work through each item in their list, referring to the Etcd Operator
+codebase for an implementation reference.
 
 ---
+
+# HOW YOU CAN CREATE OPERATORS
 
 > # 1.
 > Operators should install as a single deployment e.g.
 > `kubectl create -f https://coreos.com/operators/etcd/latest/deployment.yaml`
 > and take no additional action once installed.
 
-    $ cat kube/deployment.yaml
-    apiVersion: extensions/v1beta1
-    kind: Deployment
-    metadata:
-      name: postgres-operator
-    spec:
-      replicas: 1
-      template:
-        metadata:
-          labels:
-            name: postgres-operator
-        spec:
-          containers:
-          . name: postgres-operator
-            image: quay.io/lukebond/postgres-operator
-            env:
-            . name: MY_POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+Let's look at example/deployment.yaml from the Etcd Operator.
 
 ---
+
+# HOW YOU CAN CREATE OPERATORS
 
 > # 2.
 > Operators should create a new third party type when installed into
 > Kubernetes. A user will create new application instances using this type.
 
-        tpr := &extensions.ThirdPartyResource{
-                ObjectMeta: k8sapi.ObjectMeta{
-                        Name: "postgres-operator.lukeb0nd.com",
-                },
-                Versions: []extensions.APIVersion{
-                        {Name: "v1"},
-                },
-                Description: "Semi-automatic PostgreSQL cluster",
-        }
-        _, err := config.KubeCli.ThirdPartyResources().Create(tpr)
-
-Demo!
+Let's take a look at how the Etcd Operator does this.
 
 ---
+
+# HOW YOU CAN CREATE OPERATORS
 
 > # 3.
 > Operators should leverage built-in Kubernetes primitives like Services and
@@ -213,12 +236,14 @@ Demo!
 - The Etcd Operator uses a ReplicaSet with `replicas=1` to keep the backup
   running
 - But then reconciles cluster size itself (instead of using a ReplicaSet)
-  - This is because cluster scaling tasks are specialised, not as simple as
-    adding and removing pods
+  - This is because database cluster scaling tasks are specialised, not as
+    simple as adding and removing pods
 
 Let's look at some code!
 
 ---
+
+# HOW YOU CAN CREATE OPERATORS
 
 > # 4.
 > Operators should be backwards compatible and always understand previous
@@ -226,11 +251,17 @@ Let's look at some code!
 
 ---
 
+# HOW YOU CAN CREATE OPERATORS
+
 > # 5.
 > Operators should be designed so application instances continue to run
 > unaffected if the Operator is stopped or removed.
 
+This is obvious but important!
+
 ---
+
+# HOW YOU CAN CREATE OPERATORS
 
 > # 6.
 > Operators should give users the ability to declare a desired version and
@@ -244,6 +275,8 @@ Let's look at some code!
 - Declarative rather than imperative configuration is a solid part of Kubernetes
 
 ---
+
+# HOW YOU CAN CREATE OPERATORS
 
 > # 7.
 > Operators should be tested against a "Chaos Monkey" test suite that
@@ -259,6 +292,17 @@ The Etcd operator has such a chaos monkey type test approach:
 - Easy to translate into other applications, e.g. Postgres, etc.
 
 -> Let's look at a bit of the code
+
+---
+
+
+
+
+
+
+
+
+-> ## Demo Time!!
 
 ---
 
